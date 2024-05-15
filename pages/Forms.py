@@ -2,6 +2,7 @@ import streamlit as st
 import Home
 import audio as au
 
+global all_data
 form = ""
 all_data = ([[]], [])
 st.title("Parlez-nous de ce que vous faites, Ça nous interesse :)")
@@ -56,33 +57,41 @@ with st.form("my_form"):
     fini = st.form_submit_button("J'ai fini")
 
     savoir_data = {
-        "Nom : ": nom,
-        "Prénom : ": prenom,
-        "Adresse : ": adresse,
-        "Contact : ": contact,
-        "E-mail : ": mail,
-        "Savoir-Faire : ": savoir_faire,
-        "Description : ": talent_description,
-        "Catégorie : ": talent_categorie,
-        "Mots-Clés : " : mots_clés,
-        "Nom et Prénom de l'Interviewer : ": nom_in,
-        "Autres Informations : ": autres_infos
+        "Nom": nom,
+        "Prénom": prenom,
+        "Adresse": adresse,
+        "Contact": contact,
+        "E-mail": mail,
+        "Savoir-Faire": savoir_faire,
+        "Description": talent_description,
+        "Catégorie": talent_categorie,
+        "Mots-Clés" : mots_clés,
+        "Nom et Prénom de l'Interviewer": nom_in,
+        "Autres Informations": autres_infos
     }
 
 
 if fini:
+    #create details info file
     with open(str(au.dossier_name + "/info.txt"), "w") as f:
             for question, reponse in savoir_data.items():
                 f.write(f"{question}: {reponse}\n")
-    # Call the function to copy the img folder
+                
+    # Call the function to copy the img folder(create the image folder)
     au.copy_folder("/home/lesly/Hackaton/MONDJEMIN/img/", str(au.dossier_name + "/img/"))
     # Charger les images et leurs informations
     all_data = au.load_images()
-    print("create_all_data")
-    print(all_data)
+    au.save_data_f(all_data, "")
     form = "finis"
-
-if fini == "finis" and Home.traitement == "finis" :
-    st.switch_page("gallery")
+    with st.spinner("Checking conditions... Please wait."):
+        conditions_met = au.check_conditions()
+    
+    if conditions_met:
+        with st.spinner("Processing... Please wait."):
+            # Perform the long-running task
+            result = au.long_running_task()
+            st.success("Votre savoir-faire est maintenant disponible partout dans le monde. Allez à la Page Gallery pour le visionner")  # Display the result when done
+    else:
+        st.error("Nous avons rencontré une erreur :'(, désolé revenez plus tard")
 
 

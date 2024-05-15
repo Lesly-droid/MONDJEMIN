@@ -1,13 +1,17 @@
+import keyword
 import streamlit as st
 from PIL import Image
 import os
 import audio as au
 import Home as h
-import pages.Forms as f
+import pages.Forms as f 
+import time
 
+all_data = au.load_data_f()
+# all_data = {k: v for k, v in all_data.items() if k and v}
+print(all_data)
 
-
-# Fonction pour charger les images et leurs informations
+#Fonction pour charger les images et leurs informations
 # def load_images_and_info():
 #     images = []
 #     info = []
@@ -37,33 +41,41 @@ search_keywords = st.text_input("Rechercher par mots-clés")
 def filter_images_by_keywords(keywords):
     filtered_images = [[]]
     filtered_info = []
-    all_im, all_inf = f.all_data
-    for img, inf in zip(all_im, all_inf):
+    # all_im, all_inf = all_data
+    for img, inf in all_data.items():
         # if any(keywords.lower() in inf.lower().split()):
         if au.keyword_in_mots_cles(keywords, inf):
             filtered_images.append(img)
             filtered_info.append(inf)
-    return filtered_images, filtered_info
+    d = filtered_images, filtered_info
+    return au.to_the_right_format(d)
 
 # Filtrer les images si des mots-clés sont saisis
 if search_keywords:
-    filtered_images, filtered_info = filter_images_by_keywords(search_keywords)
+    d = filter_images_by_keywords(search_keywords)
 else:
-    filtered_images, filtered_info = f.all_data
-    
-# Affichage de la galerie d'images
-selected_image_index = st.sidebar.radio("Sélectionnez une image", range(len(filtered_images)), format_func=lambda x: filtered_info[x])
+    d = all_data
 
-if selected_image_index is not None:
-    selected_image = filtered_images[selected_image_index]
-    selected_info = filtered_info[selected_image_index]
+# Get the keys of the dictionary
+keys = list(all_data.keys())
+
+# Sidebar radio button to select an image key
+selected_key = st.sidebar.radio("Sélectionnez une image", keys)
+
+
+if selected_key is not None:
+    selected_image = selected_key
+    selected_info = all_data[selected_key]
 
     # Afficher l'image en grand
-    st.image(selected_image[0], use_column_width=True)
-    st.write(selected_info)
+    if(selected_image):
+        for i in range(len(selected_image)):
+            time.sleep(5)
+            st.image(selected_image[i], use_column_width=True, caption=selected_info)
+    #st.write(selected_info)
 
 # Afficher les images de la galerie
 st.sidebar.header("Galerie d'Images")
-for img, inf in zip(filtered_images, filtered_info):
+for img, inf in all_data.items():
     st.sidebar.image(img[0], use_column_width=True, caption=inf)
 
