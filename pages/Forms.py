@@ -73,15 +73,16 @@ with st.form("my_form"):
 
 if fini:
     #create details info file
-    with open(str(au.dossier_name + "/info.txt"), "w") as f:
+    with open(str(au.dossier_name + "info.txt"), "w") as f:
             for question, reponse in savoir_data.items():
                 f.write(f"{question}: {reponse}\n")
                 
     # Call the function to copy the img folder(create the image folder)
-    au.copy_folder("/home/lesly/Hackaton/MONDJEMIN/img/", str(au.dossier_name + "/img/"))
+    au.copy_folder("/Users/mahuviwaniyilo/Downloads/LIVRABLES/MONDJEMIN-master-2/img/", str(au.dossier_name + "/img/"))
     # Charger les images et leurs informations
     all_data = au.load_images()
-    au.save_data_f(all_data, "")
+    print(all_data)
+    au.save_data_f(all_data)
     form = "finis"
     with st.spinner("Checking conditions... Please wait."):
         conditions_met = au.check_conditions()

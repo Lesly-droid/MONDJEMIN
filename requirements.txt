@@ -3,5 +3,5 @@ audio_recorder_streamlit
 streamlit_extras
 pillow
 Pickle
-transformers
-pydub
+#transformers
+#pydub
